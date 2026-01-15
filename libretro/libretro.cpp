@@ -114,6 +114,15 @@ namespace Libretro
    static bool detectVsyncSwapIntervalOptShown = true;
    static bool softwareRenderInitHack = false;
 
+   static int screenScalingFilter = SCALE_NEAREST;
+
+   static void ApplyScreenScalingFilter()
+   {
+      g_Config.displayLayoutLandscape.iDisplayFilter = screenScalingFilter;
+      g_Config.displayLayoutPortrait.iDisplayFilter  = screenScalingFilter;
+   }
+
+
    static s64 expectedTimeUsPerRun = 0;
    static uint32_t vsyncSwapInterval = 1;
    static uint32_t vsyncSwapIntervalLast = 1;
@@ -727,6 +736,17 @@ static void check_variables(CoreParameter &coreParam)
          g_Config.bDisplayCropTo16x9 = false;
       else
          g_Config.bDisplayCropTo16x9 = true;
+   }
+
+   var.key = "ppsspp_screen_scaling_filter";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      if (!strcmp(var.value, "Nearest"))
+         screenScalingFilter = SCALE_NEAREST;
+      else
+         screenScalingFilter = SCALE_LINEAR;
+
+      ApplyScreenScalingFilter();
    }
 
    var.key = "ppsspp_frameskip";
@@ -1706,6 +1726,9 @@ void retro_run(void)
       coreState = CORE_RUNNING_CPU;
       g_bootErrorString.clear();
       g_pendingBoot = false;
+
+      // Re-apply screen scaling filter after game/assets overrides (e.g. ForceSoftwareRenderer).
+      ApplyScreenScalingFilter();
 
       if (unserialize_data) {
          retro_unserialize(unserialize_data, unserialize_size);

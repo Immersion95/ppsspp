@@ -701,6 +701,20 @@ struct retro_core_option_v2_definition option_defs_us[] = {
       "Auto"
    },
    {
+      "ppsspp_screen_scaling_filter",
+      "PPSSPP Screen Scaling Filter",
+      NULL,
+      "Filter applied to the final PSP screen output when scaled. Nearest gives crisp pixels, Linear is smoother.",
+      NULL,
+      "video",
+      {
+         { "Linear",  NULL },
+         { "Nearest", NULL },
+         { NULL, NULL },
+      },
+      "Nearest"
+   },
+   {
       "ppsspp_smart_2d_texture_filtering",
       "Smart 2D Texture Filtering",
       NULL,
